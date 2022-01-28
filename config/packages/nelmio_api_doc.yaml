@@ -1,0 +1,19 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Bilemo Api
+            description: Bilemo Api Documentation
+            version: 1.0.0
+        servers:
+            - url: http://localhost:8000
+              description: Development server
+        components: 
+            securitySchemes: 
+                Bearer: 
+                    type: http
+                    scheme: Bearer
+                    bearerFormat: JWT
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+
