@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Product;
+use OpenApi\Annotations as OA;
+use App\Representation\Products;
+use App\Repository\ProductRepository;
+use FOS\RestBundle\Request\ParamFetcher;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations\View;
+use Symfony\Component\Routing\Annotation\Route;
+use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+
+class ProductController extends AbstractFOSRestController
+{
+    /**
+     *@Route("/api/products", methods={"GET"})
+     *@QueryParam(
+     *   name="offset",
+     *   requirements="\d+",
+     *   default="0",
+     *   description="offset"
+     *)
+     *@QueryParam(
+     *   name="limit",
+     *   requirements="\d+",
+     *   default="10",
+     *   description="limit"
+     *)
+     *@View(serializergroups={"list_product"})
+     *@OA\Tag(name="Product")
+     *@Security(name="Bearer")
+     *@OA\Parameter(
+     *   name="offset",
+     *   in="query",
+     *   @OA\Schema(type="integer")
+     *)
+     *@OA\Parameter(
+     *   name="limit",
+     *   in="query",
+     *   @OA\Schema(type="integer")
+     *)
+     */
+    public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher)
+    {
+        $offset = $paramFetcher->get('offset');
+        $limit = $paramFetcher->get('limit');
+        $products = $productRepository->findBy([], ['name' => 'ASC'], $limit, $offset);
+        return new Products($products);
+        //return $this->respond($products);
+    }
+
+    /**
+     *@Route("/api/products/{id}", methods={"GET"})
+     */
+    public function getProductDetails(Request $request, ProductRepository $productRepository, $id)
+    {
+        $product = $productRepository->find($id);
+        return $this->respond($product);
+    }
+
+    protected function respond($data, int $statusCode = Response::HTTP_OK): Response
+    {
+        return $this->handleView($this->view($data, $statusCode));
+    }
+}
