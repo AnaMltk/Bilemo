@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -19,9 +20,10 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client",inversedBy="users")
+     * @ORM\JoinColumn(name="client_id",referencedColumnName="id")
      */
-    private $client_id;
+    private $client;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -43,14 +45,14 @@ class User
         return $this->id;
     }
 
-    public function getClientId(): ?int
+    public function getClient(): Client
     {
-        return $this->client_id;
+        return $this->client;
     }
 
-    public function setClientId(int $client_id): self
+    public function setClient(Client $client): self
     {
-        $this->client_id = $client_id;
+        $this->client = $client;
 
         return $this;
     }

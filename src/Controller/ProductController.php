@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class ProductController extends AbstractFOSRestController
 {
@@ -47,9 +49,30 @@ class ProductController extends AbstractFOSRestController
      *   in="query",
      *   @OA\Schema(type="integer")
      *)
+     *@OA\Response(
+     *    response=200, 
+     *    description="Product list",
+     *    @OA\JsonContent(
+     *      type="array",
+     *      @OA\Items(ref=@Model(type=Product::class, groups={"list_product"}))
+     *    )
+     *)
+     *@OA\Response(
+     *response=401,
+     *description="Invalid token"
+     *)
      */
-    public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher)
+    public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher, ConstraintViolationList $violations)
     {
+        if (count($violations)) {
+            $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
+            foreach ($violations as $violation) {
+                $message .= sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
+            }
+
+            throw new ResourceValidationException($message);
+        }
+
         $offset = $paramFetcher->get('offset');
         $limit = $paramFetcher->get('limit');
         $products = $productRepository->findBy([], ['name' => 'ASC'], $limit, $offset);
@@ -59,6 +82,7 @@ class ProductController extends AbstractFOSRestController
 
     /**
      *@Route("/api/products/{id}", methods={"GET"})
+     *@OA\Tag(name="Product")
      */
     public function getProductDetails(Request $request, ProductRepository $productRepository, $id)
     {
