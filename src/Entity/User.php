@@ -5,10 +5,41 @@ namespace App\Entity;
 use App\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use JMS\Serializer\Annotation as Serializer;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @Hateoas\Relation(
+ *      name = "self",
+ *      href = @Hateoas\Route(
+ *          "client_user_details",
+ *          parameters = {
+ *              "id" = "expr(object.getClient().getId())", "user_id" = "expr(object.getId())"
+ *          },
+ *          absolute = true
+ *      ),
+ *      attributes = {"actions": { "read": "GET", "post": "POST", "delete": "DELETE" }},
+ *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
+ * )
+ * @Hateoas\Relation(
+ *      name = "all",
+ *      href = @Hateoas\Route(
+ *          "list_user",
+ *          parameters = {
+ *              "id" = "expr(object.getClient().getId())"
+ *          },
+ *          absolute = true
+ *      ),
+ *      attributes = {"actions": { "read": "GET" }},
+ *      exclusion = @Hateoas\Exclusion(groups = {"SHOW_USER"})
+ * )
+ * @Hateoas\Relation(
+ *      "client",
+ *      embedded = @Hateoas\Embedded("expr(object.getClient())"),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
+ * )
  */
 class User
 {

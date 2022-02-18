@@ -14,6 +14,7 @@ class ClientFixtures extends Fixture
 {
     public $encoder;
     public const ORANGE = 'Orange';
+    public const FREE = 'Free';
 
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
@@ -29,6 +30,14 @@ class ClientFixtures extends Fixture
             $client->setPassword($password);
             $this->addReference(self::ORANGE, $client);
             $manager->persist($client);
+
+            $client1 = new Client();
+            $client1->setName('Free');
+            $client1->setEmail('admin@free.com');
+            $password = $this->encoder->encodePassword($client1, 'admin');
+            $client1->setPassword($password);
+            $this->addReference(self::FREE, $client1);
+            $manager->persist($client1);
 
         $manager->flush();
     }

@@ -62,17 +62,9 @@ class ProductController extends AbstractFOSRestController
      *description="Invalid token"
      *)
      */
-    public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher, ConstraintViolationList $violations)
+    public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher)
     {
-        if (count($violations)) {
-            $message = 'The JSON sent contains invalid data. Here are the errors you need to correct: ';
-            foreach ($violations as $violation) {
-                $message .= sprintf("Field %s: %s ", $violation->getPropertyPath(), $violation->getMessage());
-            }
-
-            throw new ResourceValidationException($message);
-        }
-
+    
         $offset = $paramFetcher->get('offset');
         $limit = $paramFetcher->get('limit');
         $products = $productRepository->findBy([], ['name' => 'ASC'], $limit, $offset);

@@ -15,9 +15,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            lazy: true
-            provider: app_client_provider
+
         login:
             pattern: ^/api/login
             stateless: true
@@ -25,10 +23,17 @@ security:
                 check_path: /api/login
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                username_path: email
+        doc:
+            pattern: ^/api/doc
+            security: false
         api:
             pattern: ^/api
             stateless: true
             jwt: ~
+        main:
+            lazy: true
+            provider: app_client_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
