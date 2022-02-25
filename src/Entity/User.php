@@ -2,12 +2,44 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use JMS\Serializer\Annotation as Serializer;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @Hateoas\Relation(
+ *      name = "self",
+ *      href = @Hateoas\Route(
+ *          "client_user_details",
+ *          parameters = {
+ *              "id" = "expr(object.getClient().getId())", "user_id" = "expr(object.getId())"
+ *          },
+ *          absolute = true
+ *      ),
+ *      attributes = {"actions": { "read": "GET", "post": "POST", "delete": "DELETE" }},
+ *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
+ * )
+ * @Hateoas\Relation(
+ *      name = "all",
+ *      href = @Hateoas\Route(
+ *          "list_user",
+ *          parameters = {
+ *              "id" = "expr(object.getClient().getId())"
+ *          },
+ *          absolute = true
+ *      ),
+ *      attributes = {"actions": { "read": "GET" }},
+ *      exclusion = @Hateoas\Exclusion(groups = {"SHOW_USER"})
+ * )
+ * @Hateoas\Relation(
+ *      "client",
+ *      embedded = @Hateoas\Embedded("expr(object.getClient())"),
+ *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
+ * )
  */
 class User
 {
@@ -19,9 +51,10 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client",inversedBy="users")
+     * @ORM\JoinColumn(name="client_id",referencedColumnName="id")
      */
-    private $client_id;
+    private $client;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -43,14 +76,14 @@ class User
         return $this->id;
     }
 
-    public function getClientId(): ?int
+    public function getClient(): Client
     {
-        return $this->client_id;
+        return $this->client;
     }
 
-    public function setClientId(int $client_id): self
+    public function setClient(Client $client): self
     {
-        $this->client_id = $client_id;
+        $this->client = $client;
 
         return $this;
     }
