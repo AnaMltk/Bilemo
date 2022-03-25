@@ -7,9 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(
+ *  fields="email",
+ *  message="Un utilisateur avec cet email existe déjà"
+ * )
  * @ORM\Table(name="`user`")
  * @Hateoas\Relation(
  *      name = "self",
@@ -23,23 +29,6 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *      attributes = {"actions": { "read": "GET", "post": "POST", "delete": "DELETE" }},
  *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
  * )
- * @Hateoas\Relation(
- *      name = "all",
- *      href = @Hateoas\Route(
- *          "list_user",
- *          parameters = {
- *              "id" = "expr(object.getClient().getId())"
- *          },
- *          absolute = true
- *      ),
- *      attributes = {"actions": { "read": "GET" }},
- *      exclusion = @Hateoas\Exclusion(groups = {"SHOW_USER"})
- * )
- * @Hateoas\Relation(
- *      "client",
- *      embedded = @Hateoas\Embedded("expr(object.getClient())"),
- *      exclusion = @Hateoas\Exclusion(groups = {"list_user"})
- * )
  */
 class User
 {
@@ -47,12 +36,14 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"list_user"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client",inversedBy="users")
      * @ORM\JoinColumn(name="client_id",referencedColumnName="id")
+     * @Serializer\Exclude
      */
     private $client;
 
@@ -63,11 +54,16 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"list_user"})
      */
     private $last_name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"list_user"})
+     * @Assert\Email(
+     *     message = "The email is not a valid email."
+     * )
      */
     private $email;
 

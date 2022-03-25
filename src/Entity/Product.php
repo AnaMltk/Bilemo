@@ -25,21 +25,25 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"list_product"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Serializer\Groups({"list_product"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float")
+     * @Serializer\Groups({"list_product"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Groups({"list_product"})
      */
     private $category;
 

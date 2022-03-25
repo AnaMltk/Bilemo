@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ClientRepository;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -25,11 +26,13 @@ class Client implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Exclude
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Exclude
      */
     private $password;
 
@@ -86,7 +89,7 @@ class Client implements UserInterface
 
     public function eraseCredentials()
     {
-        
+
     }
 
     public function getUserIdentifier()
@@ -108,5 +111,5 @@ class Client implements UserInterface
     {
         return $this->name;
     }
-    
+
 }

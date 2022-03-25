@@ -18,13 +18,13 @@ class AuthController extends AbstractFOSRestController
      *  @OA\MediaType(
      *      mediaType="application/json",
      *      @OA\Schema(
-     *          @OA\Property(property="email", type="string", example="admn@orange.com"),
+     *          @OA\Property(property="email", type="string", example="admin@orange.com"),
      *          @OA\Property(property="password", type="string", example="admin")
      *      )
      *  )
      * )
      * @OA\Response(
-     *    response=200, 
+     *    response=200,
      *    description="Token",
      *    @OA\JsonContent(
      *      @OA\Property(
