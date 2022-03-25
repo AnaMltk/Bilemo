@@ -36,7 +36,6 @@ class ClientRepository extends ServiceEntityRepository
     }
     */
 
-    /*
     public function findOneBySomeField($value): ?Client
     {
         return $this->createQueryBuilder('c')
@@ -46,5 +45,5 @@ class ClientRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-    */
+
 }

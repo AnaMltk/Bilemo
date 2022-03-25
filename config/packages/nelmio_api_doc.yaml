@@ -2,16 +2,18 @@ nelmio_api_doc:
     documentation:
         info:
             title: Bilemo Api
-            description: Bilemo Api Documentation
+            description: "Bilemo Api Documentation <br>
+                         To login go to the 'Login' section <br>
+                         Once logged in, you will be able to consult products and users using respective endpoints"
             version: 1.0.0
         servers:
             - url: http://bilemo.loc
               description: docker server
             - url: http://localhost:8000
               description: Development server
-        components: 
-            securitySchemes: 
-                Bearer: 
+        components:
+            securitySchemes:
+                Bearer:
                     type: http
                     scheme: Bearer
                     bearerFormat: JWT

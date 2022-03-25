@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use Exception;
 use OpenApi\Annotations as OA;
 use App\Representation\Products;
 use App\Repository\ProductRepository;
@@ -13,6 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\View;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
@@ -50,7 +52,7 @@ class ProductController extends AbstractFOSRestController
      *   @OA\Schema(type="integer")
      *)
      *@OA\Response(
-     *    response=200, 
+     *    response=200,
      *    description="Product list",
      *    @OA\JsonContent(
      *      type="array",
@@ -64,7 +66,7 @@ class ProductController extends AbstractFOSRestController
      */
     public function getProductList(Request $request, ProductRepository $productRepository, ParamFetcherInterface $paramFetcher)
     {
-    
+
         $offset = $paramFetcher->get('offset');
         $limit = $paramFetcher->get('limit');
         $products = $productRepository->findBy([], ['name' => 'ASC'], $limit, $offset);
@@ -75,10 +77,27 @@ class ProductController extends AbstractFOSRestController
     /**
      *@Route("/api/products/{id}", methods={"GET"})
      *@OA\Tag(name="Product")
+     *@Security(name="Bearer")
+     *@OA\Response(
+     *    response=200,
+     *    description="Product detail",
+     *    @OA\JsonContent(
+     *      type="array",
+     *      @OA\Items(ref=@Model(type=Product::class, groups={"list_product"}))
+     *    )
+     *)
+     *@OA\Response(
+     *response=401,
+     *description="Invalid token"
+     *)
+     *
      */
     public function getProductDetails(Request $request, ProductRepository $productRepository, $id)
     {
         $product = $productRepository->find($id);
+        if (!$product) {
+            throw new NotFoundHttpException('No product found');
+        }
         return $this->respond($product);
     }
 

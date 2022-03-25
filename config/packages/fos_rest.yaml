@@ -24,3 +24,4 @@ fos_rest:
         App\Exception\ForbiddenException: true,
         Symfony\Component\HttpKernel\Exception\NotFoundHttpException: true
       }
+    serializer_error_renderer: true
