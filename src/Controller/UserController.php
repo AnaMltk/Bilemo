@@ -159,6 +159,9 @@ class UserController extends AbstractFOSRestController
     public function addUser(Request $request, ClientRepository $clientRepository, ParamFetcherInterface $paramFetcher, $id, ValidatorInterface $validator)
     {
         $client = $clientRepository->find($id);
+        if ($this->getUser()->getId() !== $client->getId()) {
+            throw new ForbiddenException();
+        }
         $firstName = $paramFetcher->get('first_name');
         $lastName = $paramFetcher->get('last_name');
         $email = $paramFetcher->get('email');
@@ -202,8 +205,12 @@ class UserController extends AbstractFOSRestController
      * description="Access forbidden"
      * )
      */
-    public function deleteUser(UserRepository $userRepository, $user_id)
+    public function deleteUser(UserRepository $userRepository, $id, $user_id)
     {
+        $client = $clientRepository->find($id);
+        if ($this->getUser()->getId() !== $client->getId()) {
+            throw new ForbiddenException();
+        }
         $user = $userRepository->find($user_id);
         $this->getDoctrine()->getManager()->remove($user);
         $this->getDoctrine()->getManager()->flush();
