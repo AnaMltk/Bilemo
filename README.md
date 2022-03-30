@@ -65,7 +65,6 @@ $ php bin/console doctrine:fixtures:load
 ```
 
 ### Access documentation 
-run
 ```
 /api/doc
 
