@@ -45,6 +45,12 @@ run
 ```
 $ composer update
 ```
+### Generate the SSL keys: 
+run
+```
+php bin/console lexik:jwt:generate-keypair
+
+```
 ### Run latest migration
 run
 ```
@@ -57,3 +63,5 @@ run
 $ php bin/console doctrine:fixtures:load
 
 ```
+
+
