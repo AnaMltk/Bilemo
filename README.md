@@ -28,6 +28,17 @@ The goal of this project is to create an API with the following fonctionnalities
 $ git clone https://github.com/AnaMltk/Bilemo.git yourFolderName
 $ cd yourFolderName
 ```
+### Install dependencies
+run
+```
+$ composer update
+```
+### Generate the SSL keys: 
+run
+```
+php bin/console lexik:jwt:generate-keypair
+
+```
 
 ### Edit .env file OR create .env.local to avoid commiting sensible information 
 ``` 
@@ -40,17 +51,7 @@ run
 ```
 $ php bin/console doctrine:database:create
 ```
-### Composer
-run
-```
-$ composer update
-```
-### Generate the SSL keys: 
-run
-```
-php bin/console lexik:jwt:generate-keypair
 
-```
 ### Run latest migration
 run
 ```
